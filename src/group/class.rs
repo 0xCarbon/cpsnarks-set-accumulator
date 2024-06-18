@@ -6,6 +6,8 @@ use super::{ElemFrom, ElemToBytes, Group, UnknownOrderGroup};
 use crate::util;
 use crate::util::{int, TypeRep};
 use rug::{rand::MutRandState, Assign, Integer};
+use serde::de::Error as SerdeError;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::hash::{Hash, Hasher};
 use std::str::FromStr;
 
@@ -41,6 +43,32 @@ pub struct ClassElem {
     a: Integer,
     b: Integer,
     c: Integer,
+}
+
+impl Serialize for ClassElem {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let a_str = self.a.to_string();
+        let b_str = self.b.to_string();
+        let c_str = self.c.to_string();
+        let tuple = (a_str, b_str, c_str);
+        tuple.serialize(serializer)
+    }
+}
+
+impl<'de> Deserialize<'de> for ClassElem {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let (a_str, b_str, c_str) = <(String, String, String)>::deserialize(deserializer)?;
+        let a = Integer::from_str(&a_str).map_err(SerdeError::custom)?;
+        let b = Integer::from_str(&b_str).map_err(SerdeError::custom)?;
+        let c = Integer::from_str(&c_str).map_err(SerdeError::custom)?;
+        Ok(ClassElem { a, b, c })
+    }
 }
 
 // `ClassElem` and `ClassGroup` ops based on Chia's fantastic doc explaining applied class groups:
