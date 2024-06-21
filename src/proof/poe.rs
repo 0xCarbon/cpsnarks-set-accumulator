@@ -4,8 +4,10 @@ use crate::hash::hash_to_prime;
 use crate::util::int;
 use rug::Integer;
 
+use serde::{Deserialize, Serialize};
+
 #[allow(non_snake_case)]
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Serialize, Deserialize)]
 /// Struct for NI-PoE.
 pub struct Poe<G: Group> {
     Q: G::Elem,

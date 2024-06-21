@@ -1,9 +1,10 @@
 //! Non-Interactive Proofs of Knowledge of Co-prime Roots (NI-PoKCR). See BBF (page 11) for details.
 use crate::group::{multi_exp, Group};
 use rug::Integer;
+use serde::{Deserialize, Serialize};
 
 #[allow(non_snake_case)]
-#[derive(PartialEq, Eq, Hash, Clone, Debug)]
+#[derive(PartialEq, Eq, Hash, Clone, Debug, Serialize, Deserialize)]
 /// Struct for NI-PoKCR.
 pub struct Pokcr<G: Group> {
     w: G::Elem,

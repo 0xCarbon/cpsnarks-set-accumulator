@@ -7,6 +7,8 @@ use rug::Integer;
 use std::hash::Hash;
 use std::marker::PhantomData;
 
+use serde::{Deserialize, Serialize};
+
 #[derive(Debug)]
 /// The different types of accumulator errors.
 pub enum AccError {
@@ -32,7 +34,7 @@ pub trait AccumulatorParameters {
     fn should_hash_to_prime() -> bool;
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 /// an accumulator that does hash to prime
 pub struct AccumulatorWithHashToPrime {}
 impl AccumulatorParameters for AccumulatorWithHashToPrime {
@@ -41,7 +43,7 @@ impl AccumulatorParameters for AccumulatorWithHashToPrime {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 /// an accumulator that doesn't do hash to prime, because it assumes its elements are prime
 pub struct AccumulatorWithoutHashToPrime {}
 impl AccumulatorParameters for AccumulatorWithoutHashToPrime {
@@ -53,7 +55,7 @@ impl AccumulatorParameters for AccumulatorWithoutHashToPrime {
 // See https://doc.rust-lang.org/std/marker/struct.PhantomData.html#ownership-and-the-drop-check
 // for recommendations regarding phantom types. Note that we disregard the suggestion to use a
 // const reference in the phantom type parameter, which causes issues for the `Send` trait.
-#[derive(Debug, Eq, Hash, PartialEq)]
+#[derive(Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
 /// A cryptographic accumulator. Wraps a single unknown-order group element and phantom data
 /// representing the type `T` being hashed-to-prime and accumulated.
 pub struct Accumulator<G: UnknownOrderGroup, T: Into<Integer>, P: AccumulatorParameters> {
@@ -78,7 +80,7 @@ impl<G: UnknownOrderGroup, T: Hash + Into<Integer>, P: AccumulatorParameters> Cl
     }
 }
 
-#[derive(Debug, Eq, Hash, PartialEq)]
+#[derive(Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
 /// A witness to one or more values in an accumulator, represented as an accumulator.
 pub struct Witness<G: UnknownOrderGroup, T: Hash + Into<Integer>, P: AccumulatorParameters>(
     pub Accumulator<G, T, P>,
@@ -94,7 +96,7 @@ impl<G: UnknownOrderGroup, T: Hash + Into<Integer>, P: AccumulatorParameters> Cl
     }
 }
 
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
 /// A succinct proof of membership (some element is in some accumulator).
 pub struct MembershipProof<
     G: UnknownOrderGroup,
@@ -106,7 +108,7 @@ pub struct MembershipProof<
     proof: Poe<G>,
 }
 
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
 /// A succinct proof of nonmembership (some element is not in some accumulator).
 pub struct NonmembershipProof<G: UnknownOrderGroup, T> {
     phantom: PhantomData<*const T>,
