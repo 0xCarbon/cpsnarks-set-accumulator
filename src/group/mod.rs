@@ -17,6 +17,8 @@ pub use class::{ClassElem, ClassGroup};
 mod rsa;
 pub use rsa::{Rsa2048, Rsa2048Elem};
 
+use serde::{Deserialize, Serialize};
+
 /// A mathematical group.
 ///
 /// This trait allows the implementation of standard group routines:
@@ -41,7 +43,15 @@ pub trait Group: Clone + Debug + Eq + Hash + TypeRep + Send + Sync {
     // associated types are not currently supported by Rust.
 
     /// The associated group element type for this group.
-    type Elem: Clone + Debug + Eq + Hash + Sized + Send + Sync;
+    type Elem: Clone
+        + Debug
+        + Eq
+        + Hash
+        + Sized
+        + Send
+        + Sync
+        + Serialize
+        + for<'de> Deserialize<'de>;
 
     /// A group-specific wrapper for `id`.
     fn id_(rep: &Self::Rep) -> Self::Elem;

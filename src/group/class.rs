@@ -9,6 +9,8 @@ use rug::{rand::MutRandState, Assign, Integer};
 use std::hash::{Hash, Hasher};
 use std::str::FromStr;
 
+use serde::{Deserialize, Serialize};
+
 #[allow(clippy::module_name_repetitions)]
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 /// Class group implementation, with future optimizations available via the `--features` flag.
@@ -34,7 +36,7 @@ lazy_static! {
 }
 
 #[allow(clippy::module_name_repetitions)]
-#[derive(Clone, Debug, Eq)]
+#[derive(Clone, Debug, Eq, Serialize, Deserialize)]
 /// A class group element, which wraps three GMP integers from the `rug` crate. You should never
 /// need to construct a class group element yourself.
 pub struct ClassElem {
